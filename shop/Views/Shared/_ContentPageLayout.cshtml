@@ -1,0 +1,88 @@
+﻿@{
+    Layout = "_Layout.cshtml";
+}
+
+<div>
+    <div class="shop-area">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-3 col-sm-3 col-xs-12">
+                    <div class="shop-left-col wow fadeIn" data-wow-duration=".5s" data-wow-delay=".5s">
+                        <div class="content-box">
+                            @foreach (ProductCat s in ViewBag.productCats as List<ProductCat>)
+                {
+                    <h2>@s.typeName</h2>
+                    @foreach (var n in s.types)
+        {
+            <ul>
+                <li>
+                    <span class="checkit">
+                        <input class="checkbox" type="checkbox" />
+                    </span>
+                    <label class="check-label">
+                        <a href='@Url.Action("Catalog", "Home", new { typeId = n.ObjId.ToString(), typeName = n.TypeName }, null)'>@n.TypeName</a>
+                    </label>
+                </li>
+            </ul>
+
+}
+    }
+                        </div>
+
+                        <div class="content-box">
+                            <h2>tags</h2>
+                            <ul class="tags">
+                                <li>
+                                    <a href="#">top</a>
+                                </li>
+                                <li>
+                                    <a href="#">fashion</a>
+                                </li>
+                                <li>
+                                    <a href="#">collection</a>
+                                </li>
+                                <li>
+                                    <a href="#">women</a>
+                                </li>
+                                <li>
+                                    <a href="#">men</a>
+                                </li>
+                                <li>
+                                    <a href="#">gallery</a>
+                                </li>
+                                <li>
+                                    <a href="#">new</a>
+                                </li>
+                                <li>
+                                    <a href="#">collection men</a>
+                                </li>
+                                <li>
+                                    <a href="#">top</a>
+                                </li>
+                                <li>
+                                    <a href="#">fashion</a>
+                                </li>
+                                <li>
+                                    <a href="#">collection</a>
+                                </li>
+                                <li>
+                                    <a href="#">best</a>
+                                </li>
+                                <li>
+                                    <a href="#">cloth</a>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-xs-12">
+                    @RenderBody()
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

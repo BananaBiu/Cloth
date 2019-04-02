@@ -1,0 +1,152 @@
+﻿@using shop.Models;
+@{
+    int cartRow = 0;
+    ViewData["Title"] = "购物车";
+
+    int faviRow = 0;
+}
+
+<script>
+    function _doEdit(row) {
+        document.getElementById('edit_' + row).style.display = 'none';
+        document.getElementById('update_' + row).style.display = 'block';
+        document.getElementById('qtyDsp_' + row).style.display = 'none';
+        document.getElementById('qtyIn_' + row).style.display = 'block';
+    }
+    function _doUpdate(row, retUrl) {
+        var newValue = document.getElementById('inQty_' + row).value;
+        window.location.assign("/Cart/updateCartRow/" + row + "?value=" + newValue + "&retUrl=" + retUrl);
+        // if (newValue != oldvalue) {
+        //    window.location.assign("/Cart/updateCartRow/" + row + "?value=" + newValue + "&retUrl=" + retUrl);
+        //}
+        //else
+        //    _doCancel(row);
+
+    }
+    function _doCancel(row) {
+        document.getElementById('edit_' + row).style.display = 'block';
+        document.getElementById('update_' + row).style.display = 'none';
+        document.getElementById('qtyDsp_' + row).style.display = 'block';
+        document.getElementById('qtyIn_' + row).style.display = 'none';
+    }
+    function _doDelete(row, retUrl) {
+        window.location.assign("/Cart/deleCartRow/" + row + "?retUrl=" + retUrl);
+    }
+    function _doFaviDelete(row, retUrl) {
+        window.location.assign("/Cart/deleFaviRow/" + row + "?retUrl=" + retUrl);
+    }
+    function _doStore(row, retUrl) {
+        window.location.assign("/Cart/storeCartRow/" + row + "?retUrl=" + retUrl);
+    }
+    function _doBuy(row, retUrl) {
+        window.location.assign("/Cart/buyFaviRow/" + row + "?retUrl=" + retUrl);
+    }
+</script>
+<div class="cart-wrap">
+    @if (ViewBag.cart != null && ((List<CartItem>)ViewBag.cart).Count >= 1)
+    {
+        <table id="cartTable" class="cart table table-condensed">
+            <caption style="font-size:14px;">我的购物车</caption>
+            <tr>
+
+                <th class="t-checkbox " style="text-align:center;"><label><input class="check-all check" type="checkbox" />全选</label></th>
+
+                <th class="t-goods text-center"><label>商品名称</label></th>
+
+                <th class="text-center"><label>原价</label></th>
+                <th class="t-selling-price text-center"><label>现价</label></th>
+                <th scope="col" style="text-align:center;">图片</th>
+
+                <th class="t-qty text-center"><label>数量</label></th>
+                <th class="t-subtotal text-center"><label>金额小计</label></th>
+                <th class="t-action text-center" colspan="2"><label>操作</label></th>
+
+            </tr>
+            @foreach (var cartItem in ViewBag.cart as List<CartItem>)
+            {
+                <tr>
+                    <td style=" text-align:center;vertical-align: middle;"><input type="checkbox" class="check-one check" /></td>
+                    <td style=" text-align:center;vertical-align: middle;">@cartItem.productName</td>
+
+                    <td style=" text-align:center;vertical-align: middle;">@cartItem.price</td>
+                    <td class="realprice" style=" text-align:center;vertical-align: middle;">@cartItem.realPrice</td>
+                    <td style=" text-align:center;"><img src="/Images/@cartItem.Img" style="height:100px;width:100px;border-width:0px;" /></td>
+                    @*
+                                <td style=" text-align:center;vertical-align: middle;">
+                                    <div id="qtyDsp_@cartRow" style="display:block;">@cartItem.qty</div>
+                        <div id="qtyIn_@cartRow" style="display:none;"><input id="inQty_@cartRow" type="number" style="width:30px;" value="@cartItem.qty" /></div>
+                                </td>
+                                <td style=" text-align:center;vertical-align: middle;">
+                                    <div id="edit_@cartRow" style="display:block;">
+                                        <a href="javascript:_doEdit(@cartRow)" class="btn btn-primary">编辑</a>
+                                    </div>
+                                    <div id="update_@cartRow" style="display:none;">
+                                        <a href="javascript:_doUpdate(@cartRow,@cartItem.qty,'@ViewBag.continueBuy')" class="btn btn-primary">更新</a>&nbsp;&nbsp;
+                                        <a href="javascript:_doCancel(@cartRow)" class="btn btn-primary">取消</a>
+                                    </div>
+                                </td>
+                    *@
+
+                    <td style="width:;text-align:center;vertical-align: middle;">
+                        <div class="input-group input-group-sm">
+                            <a class="input-group-addon minus" href="javascript:_doUpdate(@cartRow,'@ViewBag.continueBuy')">-</a>
+                            <input id="inQty_@cartRow" type="text" class="number form-control input-sm" style="width:30px;" value="@cartItem.qty" onchange="javascript:_doUpdate(@cartRow,'@ViewBag.continueBuy')" />
+                            <a class="input-group-addon plus" href="javascript:_doUpdate(@cartRow,'@ViewBag.continueBuy')">+</a>
+                        </div>
+                    </td>
+
+                    @*<td style=" text-align:center;vertical-align: middle;">
+                            <input type="number" style="width:30px;" value="@cartItem.qty" onclick="javascript:_doUpdate(@cartRow,@cartItem.qty,'@ViewBag.continueBuy')"/>
+                        </td>*@
+                    <td style=" text-align:center;vertical-align: middle;"><span class="pricetotal">0.00</span></td>
+                    <td style=" text-align:center;vertical-align: middle;"><a href="javascript:_doDelete(@cartRow,'@ViewBag.continueBuy')" style="color:#330099;"><span class="delete btn btn-xs btn-warning">删除</span></a></td>
+                    <td style=" text-align:center;vertical-align: middle;"><a href="javascript:_doStore(@cartRow,'@ViewBag.continueBuy');"><span class="collect btn btn-xs btn-warning">收藏 </span></a></td>
+                </tr>
+                cartRow++;
+            }
+        </table>
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-sm-12">
+                <div class="cart-summary">
+                    <div style="margin-left: 2rem;" class="pull-right">
+                        <a href="@ViewBag.continueBuy" class="btn btn-primary">继续选购</a>&nbsp;&nbsp;<a href="/Order" class="btn btn-primary">结算</a>
+                    </div>
+                    <div style="margin-left: 1rem; margin-top: 0.4rem;" class="pull-right total">
+                        <label>金额合计:<span id="priceTotal" class="large-bold-red" style="margin: 0 4px;">0.00</span>元</label>
+                    </div>
+                    <div style="margin-top: 4px;" class="pull-right">
+                        <label>
+                            您选择了<span id="itemCount" class="large-bold-red" style="margin: 0 4px;"></span>种产品型号，共计<span id="qtyCount" class="large-bold-red" style="margin: 0 4px;"></span>件，
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @if (ViewBag.favi != null && ViewBag.favi.Count >= 1)
+    {
+        <table id="cartTable" class="cart table table-condensed">
+            <caption style="font-size:14px;">我的收藏架</caption>
+            <tr>
+                <th class="t-goods text-center"><label>商品名称</label></th>
+                <th class="text-center"><label>原价</label></th>
+                <th class="t-selling-price text-center"><label>现价</label></th>
+                <th scope="col" style="text-align:center;">图片</th>
+                <th class="t-action text-center" colspan="2"><label>操作</label></th>
+            </tr>
+            @foreach (var cartItem in ViewBag.favi as List<CartItem>)
+            {
+                <tr>
+                    <td style="text-align:center;vertical-align: middle;">@cartItem.productName</td>
+
+                    <td style="text-align:center;vertical-align: middle;">@cartItem.price</td>
+                    <td style="text-align:center;vertical-align: middle;">@cartItem.realPrice</td>
+                    <td style="text-align:center;vertical-align: middle;"><img src="/Images/@cartItem.Img" style="height:100px;width:100px;border-width:0px;" /></td>
+                    <td style="text-align:center;vertical-align: middle;"><a href="javascript:_doFaviDelete(@faviRow,'@ViewBag.continueBuy')" style="color:#330099;"><span class="btn btn-info">删除</span></a></td>
+                    <td style="text-align:center;vertical-align: middle;"><a href="javascript:_doBuy(@faviRow,'@ViewBag.continueBuy');"><span class="btn btn-info">购买</span></a></td>
+                </tr>
+                faviRow++;
+            }
+        </table>
+    }
+</div>

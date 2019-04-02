@@ -1,0 +1,140 @@
+﻿@inject shopContext db
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebApplication2</title>
+    <link href="~/css/cart.css" rel="stylesheet" />
+    <link href="~/css/Untitled-2.css" rel="stylesheet" />
+    <link href="~/css/Untitled-4.css" rel="stylesheet" />
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+
+</head>
+<body>
+    <div class="head-top"></div>
+    <!--导航栏-->
+    <nav class="navbar navbar-default" role="navigation">
+
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+                    <span class="sr-only">汉堡按钮</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="index"><img src="~/images/logo.png" alt="返回首页"></a>
+
+            </div>
+            <div class="navbar-collapse collapse" id="navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">网站首页</a></li>
+                    <li class="dropdown">
+                        <a asp-area="" asp-controller="Home" asp-action="Catalog" class="dropdown-toggle" data-toggle="dropdown">衬衫</a>
+                        <ul class="dropdown-menu">
+                            <li><a asp-area="" asp-controller="Home" asp-action="Catalog">定制</a></li>
+                            <li><a href="#">免烫</a></li>
+                            <li><a href="#">高支</a></li>
+                            <li><a href="#">悠闲</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">外套</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">羽绒服</a></li>
+                            <li><a href="#">西服</a></li>
+                            <li><a href="#">夹克</a></li>
+                            <li><a href="#">大衣</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">T恤</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">熊本熊T恤</a></li>
+                            <li><a href="#">POLO衫</a></li>
+                            <li><a href="#">脏画系列</a></li>
+                            <li><a href="#">小宇宙系列</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">其他</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">针织衫</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">棉线衫</a></li>
+                            <li><a href="#">羊毛衫</a></li>
+                            <li><a href="#">空调衫</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">裤装</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">休闲裤</a></li>
+                            <li><a href="#">针织裤</a></li>
+                            <li><a href="#">牛仔裤式</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">卫衣</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">熊本熊</a></li>
+                            <li><a href="#">开衫</a></li>
+                            <li><a href="#">连帽</a></li>
+                            <li><a href="#">圆领</a></li>
+                            <li><a href="#">水柔棉</a></li>
+                        </ul>
+                    </li>
+                    <li><a>关于我们</a></li>
+                </ul>
+                <div>
+
+
+                    @await Html.PartialAsync("_LoginPartial")
+
+                </div>
+            </div>
+        </div>
+    </nav>
+    @RenderBody()
+    <!--页脚-->
+    <footer class="footer">
+        <div class="container">
+            <div class="pull-right">
+                <a href="#top">回到顶部</a>
+
+            </div>
+            <div class="footer-left">
+                <p>Copyright 2018 Bootstrap ZHBIT 服装销售网 丨 版权所有<a href="#">MCF</a></p>
+            </div>
+            <div class="footer-right">
+                <ul>
+                    <li><a href="#"><i class="glyphicon glyphicon-phone-alt">联系我们</i></a></li>
+                    <li><a href="#"><i class="glyphicon glyphicon-map-marker">公司地址</i></a></li>
+                    <li><a href="#"><i class="glyphicon glyphicon-question-sign">服务声明</i></a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+
+    @RenderSection("Scripts", required: false)
+    <script src="/lib/jquery/dist/jquery.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="~/js/etao.js"></script>
+    <script src="~/js/cart.js"></script>
+</body>
+</html>

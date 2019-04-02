@@ -1,0 +1,33 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = "付款";
+    Layout = "/Views/Shared/_Layout.cshtml";
+
+}
+<script>
+    function paySucceed() {
+        alert("支付成功！");
+        window.location.href = "~/Home/index";
+
+    }
+</script>
+<div>
+    <form method="post" id="form1" style="margin:auto">
+        <div>
+            @*需要支付金额：<span id="lblAmt">@Model.payment.Amount</span>
+        <br>
+        <br>*@
+            <span id="Label1">帐号</span><input name="TextBox1" type="text" id="TextBox1">
+            <br>
+            <br>
+            <span id="Label2">密码</span><input name="TextBox2" type="password" id="TextBox2">
+            <br>
+            <br>
+            <a asp-action="PaySucceed" class="btn btn-primary">确定支付</a>
+            @*<input type="submit" name="Button1" value="确定支付" id="Button1" onclick="javascript: paySucceed();">*@
+            @*Response.Write("<script>alert('你好，Hello!');location.href='/index.aspx';</script>");*@
+        </div>
+    </form>
+</div>

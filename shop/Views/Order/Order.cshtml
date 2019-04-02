@@ -1,0 +1,375 @@
+﻿@using Microsoft.AspNetCore.Http;
+@model shop.Models.OrderViewModel
+
+@{
+    ViewBag.Title = "订单确认";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.contBuy = "/";
+    int orderNo = 0;
+    //HttpRequest Request = ViewBag.Request as HttpRequest;
+
+}
+@section Scripts
+    {
+    <script>
+        function validateCurStepInput() { //客户端验证输入是否遗漏
+            switch (document.getElementById("curStep").value) {
+                case "step1":
+                    //var email = document.getElementById("txtEmail").value.trim();
+                    //if (email != "") document.getElementById("custEmail").innerText = email;
+
+                    var err = "";
+
+
+                    var first = true;
+                    var receiver = document.getElementById("name").value.trim();
+                    if (receiver == "") {
+                        first = false;
+                        err += "\n收货人姓名";
+                    }
+                    else {
+                        document.getElementById("receiverName").innerText = receiver;
+                    }
+
+                    var address = document.getElementById("street").value.trim();
+                    if (address == "") {
+                        if (first) {
+                            first = false;
+                            err += "\n";
+                        }
+                        err += "收货人地址。";
+                    }
+                    else {
+                        document.getElementById("receiverAddr").innerText = address;
+                    }
+
+                    var email = document.getElementById("email").value.trim();
+                    if (email != "") {
+                        document.getElementById("receiverEmail").innerText = email;
+                    }
+
+                    if (document.getElementById("mobile").value.trim() != "") {
+                        document.getElementById("receiverMobile").innerText = document.getElementById("mobile").value.trim();
+                    }
+                    else {
+                        if (first) { err += "\n"; }
+                        err += "收货人联系电话";
+                    }
+
+                    if (err == "") {
+                        document.getElementById("s1Valid").value = "true";
+                        return true;
+                    }
+                    else {
+                        alert("请补充输入以下信息：\n" + err);
+                        return false;
+                    }
+
+
+                case "step2":
+                    var ordNo = document.getElementById("orderQty").value;
+                    for (var i = 0; i < ordNo; i++) {
+                        if (document.getElementById("sendWord_" + i).value.trim() != "") {
+                            document.getElementById("receiverWord_" + i).innerText = document.getElementById("sendWord_" + i).value.trim();
+                        }
+                    }
+                    return true;
+                case "step3":
+                    if (document.getElementById("paymentType").value != -1) {
+                        document.getElementById("s3Valid").value = "true";
+                        return true;
+                    }
+                    else {
+                        alert("请选择付款方式！");
+                        return false;
+                    }
+                case "step4":
+                    return true;
+            }
+        }
+        function step1() {
+            if (document.getElementById("curStep").value != "step1") {
+                if (validateCurStepInput()) {
+                    document.getElementById("contactInfo").style.display = 'block';
+                    document.getElementById("receiverInfo").style.display = 'none';
+                    document.getElementById("paymentInfo").style.display = 'none';
+                    document.getElementById("assureInfo").style.display = 'none';
+                    document.getElementById("s1").style.background = '#BEBEBE';
+                    document.getElementById("s2").style.background = 'white';
+                    document.getElementById("s3").style.background = 'white';
+                    document.getElementById("s4").style.background = 'white';
+                    document.getElementById("curStep").value = "step1";
+                }
+            }
+        }
+        function step2() {
+            if (document.getElementById("curStep").value != "step2") {
+                if (validateCurStepInput()) {
+                    document.getElementById("contactInfo").style.display = 'none';
+                    document.getElementById("receiverInfo").style.display = 'block';
+                    document.getElementById("paymentInfo").style.display = 'none';
+                    document.getElementById("assureInfo").style.display = 'none';
+                    document.getElementById("s1").style.background = 'white';
+                    document.getElementById("s2").style.background = '#BEBEBE';
+                    document.getElementById("s3").style.background = 'white';
+                    document.getElementById("s4").style.background = 'white';
+                    document.getElementById("curStep").value = "step2";
+                }
+            }
+        }
+        function step3() {
+            if (document.getElementById("curStep").value != "step3") {
+                if (validateCurStepInput()) {
+                    document.getElementById("contactInfo").style.display = 'none';
+                    document.getElementById("receiverInfo").style.display = 'none';
+                    document.getElementById("paymentInfo").style.display = 'block';
+                    document.getElementById("assureInfo").style.display = 'none';
+                    document.getElementById("s1").style.background = 'white';
+                    document.getElementById("s2").style.background = 'white';
+                    document.getElementById("s3").style.background = '#BEBEBE';
+                    document.getElementById("s4").style.background = 'white';
+                    document.getElementById("curStep").value = "step3";
+                }
+            }
+        }
+        function step4() {
+            if (document.getElementById("curStep").value != "step4") {
+                if (validateCurStepInput()) {
+                    document.getElementById("contactInfo").style.display = 'none';
+                    document.getElementById("receiverInfo").style.display = 'none';
+                    document.getElementById("paymentInfo").style.display = 'none';
+                    document.getElementById("assureInfo").style.display = 'block';
+                    document.getElementById("s1").style.background = 'white';
+                    document.getElementById("s2").style.background = 'white';
+                    document.getElementById("s3").style.background = 'white';
+                    document.getElementById("s4").style.background = '#BEBEBE';
+                    document.getElementById("curStep").value = "step4";
+                }
+            }
+        }
+        function doSubmit() {
+            if (document.getElementById("s1Valid").value == "false") {
+                alert("请输入订单信息！");
+                step2();
+            }
+            else if (document.getElementById("s3Valid").value == "false") {
+                alert("请选择支付方式！");
+                step3();
+            }
+            else {
+                document.getElementById("orderForm").submit();
+            }
+        }
+        var xmlhttp;
+
+        $(function () {
+            xmlhttp = null;
+            if (window.XMLHttpRequest) {// code for Firefox, Opera, IE7, etc.
+                xmlhttp = new XMLHttpRequest();
+            }
+            else if (window.ActiveXObject) {// code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            if (xmlhttp != null) {
+                xmlhttp.open("GET", "/Order/getProvinces", false);//同步查询省列表
+                xmlhttp.send();
+                listProvince();
+            }
+            else {
+                alert("您的浏览器不支持XMLHTTP。");
+            }
+        });
+        function doAjaxCall(url, resultProcess, args) {
+            xmlhttp = null;
+            if (window.XMLHttpRequest) {// code for Firefox, Opera, IE7, etc.
+                xmlhttp = new XMLHttpRequest();
+            }
+            else if (window.ActiveXObject) {// code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            if (xmlhttp != null) {
+                xmlhttp.onreadystatechange = function () {
+                    if (xmlhttp.readyState == 4) {// 4 = "loaded"
+                        if (xmlhttp.status == 200) {// 200 = "OK"
+                            resultProcess(args);
+                        }
+                        else {
+                            alert("服务出现问题:" + xmlhttp.statusText);
+                        }
+                    }
+                };
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send(null);
+            }
+            else {
+                alert("您的浏览器不支持XMLHTTP。");
+            }
+        }
+
+        function paymentTypeSelected(obj) {
+            document.getElementById("paymentType").value = obj.value;
+            document.getElementById("paymentTypeName").innerText = obj.title;
+        }
+        function selePaymentType(objId, typeName) {
+            document.getElementById('pt_' + objId).checked = 'checked';
+            document.getElementById("paymentType").value = objId;
+            document.getElementById("paymentTypeName").innerText = typeName;
+        }
+    </script>
+}
+<style type="text/css">
+    .font {
+        font-size: large;
+    }
+
+    .left {
+        text-align: left;
+        font-size: 11px;
+    }
+
+    .right {
+        text-align: right;
+        font-size: 16px;
+    }
+
+    input {
+        margin: 0px;
+        padding: 0px;
+        display: inline;
+    }
+</style>
+<div>
+
+    <input id="curStep" type="hidden" value="step1" />
+    <input id="s1Valid" name="s1Valid" type="hidden" value="false" />
+    @*<input id="s2Valid" name="s2Valid" type="hidden" value="false" />*@
+    <input id="s3Valid" name="s3Valid" type="hidden" value="false" />
+    <form id="orderForm" action="~/Order" method="post">
+        @*AntiForgery.GetHtml()*@
+        <!--input id="orderQty" name="orderQty" type="hidden" value="@Model.orderQty" /-->
+        @Html.HiddenFor(m => m.orderQty)
+        <table class="cart table table-condensed">
+            <tr style="width:100%">
+                <td id="leftSide" style="width:18%;text-align:left;vertical-align:top;">
+                    <ol style="margin-top:60px">
+                        <li id="s1" style="background:#BEBEBE;"><a href="javascript: step1();">输入送货信息</a></li>
+                        <li id="s2" style="background:white;"><a href="javascript: step2();">确认商品信息</a></li>
+                        <li id="s3" style="background:white;"><a href="javascript: step3();">选择付款方式</a></li>
+                        <li id="s4" style="background:white;"><a href="javascript: step4();">确认订单</a></li>
+                    </ol>
+                </td>
+                <td id="contentPages" style="width:82%;text-align:center;">
+                    <div id="contactInfo" style="display:block;">
+                        <h3>输入送货信息</h3>
+                        <table border="1" style="border-width:1px;border-collapse:collapse;width:60%;margin:auto">
+                            <tr>
+                                <td style="text-align:center;width:48%"> 姓名：</td>
+                                <td style="text-align:left;width:48%"><input id="name" name="name" type="text" class="left" /></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center;width:48%"> 详细地址：</td>
+                                <td style="text-align:left;width:48%"><input id="street" name="street" type="text" class="left" /></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center;width:48%"> 邮编：</td>
+                                <td style="text-align:left;width:48%"><input id="zip" name="zip" type="text" class="left" /></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center;width:48%"> 移动电话：</td>
+                                <td style="text-align:left;width:48%"><input id="mobile" name="mobile" type="text" class="left" /></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center;width:48%"> 电子邮箱：</td>
+                                <td style="text-align:left;width:48%"><input id="email" name="email" type="text" class="left" /></td>
+                            </tr>
+                        </table>
+                        @Html.HiddenFor(m => m.curCustomer.TheCustomerType)
+                        @Html.HiddenFor(m => m.curCustomer.ObjId)
+                        @Html.HiddenFor(m => m.curCustomer.Email, new { id = "Email" })
+
+                        <input id="step1next" type="button" value="下一步" class="btn btn-primary" onclick="javascript: step2();" />
+                    </div>
+                    <div id="receiverInfo" style="display:none;">
+                        <h3>确认您的联系信息</h3>
+                        <table border="1" style="border-width:1px;border-collapse:collapse;width:100%;margin:auto">
+                            <tr>
+                                <th>#</th>
+                                <th>订单信息</th>
+                                <th>备注</th>
+                            </tr>
+                            @foreach (var cartItem in Model.orders)
+                            {
+                                <tr>
+                                    <td style="text-align:left;width:10%;">订单<span>@orderNo</span></td>
+
+                                    <td style="text-align:left;width:50%;">
+                                        商品名称：<span>@Model.orders[orderNo].productName</span><br />
+                                        商品描述：<span>@Model.orders[orderNo].Description</span><br />
+                                        原价格：<span>@Model.orders[orderNo].price</span><br />
+                                        现价格：<span>@Model.orders[orderNo].realPrice</span><br />
+                                        <img src="/Images/@Model.orders[orderNo].Img" style="width:150px" /><br />
+                                        <input type="hidden" name="productId_@orderNo" value="@Model.orders[orderNo].theProduct" />
+                                        <input type="hidden" name="realPrice_@orderNo" value="@Model.orders[orderNo].realPrice" />
+                                    </td>
+                                    <td style="width:40%;"><textarea id="sendWord_@orderNo" name="sendWord_@orderNo" style="width:100%;height:220px;"></textarea></td>
+                                </tr>
+                                orderNo++;
+                            }
+                        </table>
+                        <input id="step2last" type="button" value="上一步" class="btn btn-primary" onclick="javascript: step1();" />
+                        <input id="step2next" type="button" value="下一步" class="btn btn-primary" onclick="javascript: step3();" />
+                    </div>
+                    <div id="paymentInfo" style="display:none;">
+                        <h3>选择付款方式</h3>
+                        <span>（付款金额：@Model.payment.Amount 元）</span><br /><br />
+                        <input type="hidden" name="paymentAmt" value="@Model.payment.Amount" />
+                        <input type="hidden" id="paymentType" name="paymentType" value="-1" />
+                        @foreach (var p in ViewBag.payments)
+                        {
+                            <span><input type="radio" name="pType" id="pt_@p.ObjId" value="@p.ObjId" title="@p.TypeName" onclick="javascript:paymentTypeSelected(this);" /><a href="javascript:selePaymentType(@p.ObjId,'@p.TypeName');"><img src="/Images/@p.SmallImg" style="width:120px;height:30px; vertical-align:middle;" /></a></span><br />
+                        }<br />
+                        <input id="step3last" type="button" value="上一步" class="btn btn-primary" onclick="javascript: step2();" />
+                        <input id="step3next" type="button" value="下一步" class="btn btn-primary" onclick="javascript: step4();" />
+                    </div>
+                    <div id="assureInfo" style="display:none;">
+                        <h3>确认订单</h3>
+                        <table border="1" style="width:100%;border: 1px solid black;text-align:left;border-width:1px;border-collapse:collapse;margin:auto">
+                            <tr>
+                                <td>
+                                    客户联系信息：<br />
+
+                                    <span>收货人：</span><span id="receiverName"></span><br />
+                                    <span>联系电话：</span><span id="receiverMobile"></span><br />
+                                    <span>地址：</span><span id="receiverAddr"></span><br />
+                                    <span>电子邮箱：</span><span id="receiverEmail"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    订单信息：<br />
+                                    @{
+                                        orderNo = 0;
+                                        foreach (var order in Model.orders)
+                                        {
+                                            <span>订单</span><span>@orderNo</span><br />
+                                            <span>商品名称：</span><span>@order.productName</span><br />
+                                            <span>购买价格：</span><span>@order.realPrice</span><span>元</span><br />
+                                            <span>备注：</span><span id="receiverWord_@orderNo"></span><br /><br />
+                                            orderNo++;
+                                        }
+                                    }
+                                </td>
+                            <tr>
+                                <td>
+                                    支付方式：<span id="paymentTypeName"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总金额：@Model.payment.Amount 元。
+                                </td>
+                            </tr>
+                        </table>
+                        <input id="step4last" type="button" value="上一步" class="btn btn-primary" onclick="javascript: step3();" />
+                        <input id="submitForm" type="button" value="确认付款" class="btn btn-primary" onclick="javascript: doSubmit();" />
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
